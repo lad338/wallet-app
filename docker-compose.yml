@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  walletapp:
+    build: .
+    environment:
+      MONGO_HOST: mongo
+    depends_on:
+      - mongo
+    ports:
+      - 8080:8080
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    volumes:
+      - ./docker-cache/mongodb:/data/db
