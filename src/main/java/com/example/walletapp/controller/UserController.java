@@ -1,22 +1,20 @@
 package com.example.walletapp.controller;
 
-import com.example.walletapp.model.repository.User;
 import com.example.walletapp.model.api.request.UserRegistrationRequest;
+import com.example.walletapp.model.repository.User;
 import com.example.walletapp.model.service.UserRegistration;
 import com.example.walletapp.service.UserService;
+import java.math.BigDecimal;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
   private final UserService userService;
 
   @Autowired
@@ -25,9 +23,9 @@ public class UserController {
   }
 
   @PostMapping
-  public void register (@RequestBody UserRegistrationRequest request) {
-    final UserRegistration userRegistration =
-      UserRegistration.builder()
+  public void register(@RequestBody UserRegistrationRequest request) {
+    final UserRegistration userRegistration = UserRegistration
+      .builder()
       .username(request.getUsername())
       .password(request.getPassword())
       .hkd(Optional.ofNullable(request.getHkd()).map(BigDecimal::new).orElse(BigDecimal.ZERO))

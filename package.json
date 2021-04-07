@@ -1,0 +1,15 @@
+{
+  "name": "wallet-app-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prettier": "prettier --plugin=./node_modules/prettier-plugin-java --config .prettierrc.json --check 'src/**/*.java'",
+    "prettier-fix": "prettier --write --plugin=./node_modules/prettier-plugin-java --config .prettierrc.json --check 'src/**/*.java'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "prettier": "^2.2.1",
+    "prettier-plugin-java": "^1.0.2"
+  }
+}

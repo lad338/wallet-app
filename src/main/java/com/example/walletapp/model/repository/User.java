@@ -1,5 +1,6 @@
 package com.example.walletapp.model.repository;
 
+import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -10,8 +11,6 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-
 @Data
 @Builder
 @Document
@@ -21,6 +20,7 @@ public class User {
 
   @Indexed(unique = true)
   private String username;
+
   private String password;
   private String hkd;
   private String usd;

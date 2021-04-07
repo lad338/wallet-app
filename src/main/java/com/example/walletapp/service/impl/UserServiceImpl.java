@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
-
   private final UserRepository userRepository;
 
   @Autowired
@@ -21,7 +20,8 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public User register(UserRegistration userRegistration) {
-    final User user = User.builder()
+    final User user = User
+      .builder()
       .username(userRegistration.getUsername())
       .password(userRegistration.getPassword())
       .hkd(userRegistration.getHkd().toString())
