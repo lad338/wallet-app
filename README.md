@@ -158,7 +158,10 @@ In addition, server logging is also lacking.
 To simplifying dealing with decimal places, it currently rounds to 4 d.p. which may not be desired for all systems.<br/>
 A rounding method shall be included when applying this backend.
 
-Auditing can be added. The wallet final amount can be verified by the sum of all related transaction records as a cross-check.
+Potential Addition<br/>
+Auditing can be added. The wallet final amount can be verified by the sum of all related transaction records as a cross-check.<br/>
+Testing with external tools may be used. For example, testing with concurrent connection may be done to ensure the transactions and rollbacks are handler correctly.
+
 
 ## Time Spent
 
