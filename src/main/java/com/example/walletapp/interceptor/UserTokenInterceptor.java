@@ -7,6 +7,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.walletapp.annotation.UserAction;
 import com.example.walletapp.config.SecurityConfig;
 import com.example.walletapp.exception.InvalidUserTokenException;
+import com.example.walletapp.model.service.UserWallet;
+import com.example.walletapp.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,12 @@ public class UserTokenInterceptor implements AsyncHandlerInterceptor {
 
   private final SecurityConfig securityConfig;
 
+  private final UserService userService;
+
   @Autowired
-  public UserTokenInterceptor(SecurityConfig securityConfig) {
+  public UserTokenInterceptor(SecurityConfig securityConfig, UserService userService) {
     this.securityConfig = securityConfig;
+    this.userService = userService;
   }
 
   @Override
@@ -44,7 +49,13 @@ public class UserTokenInterceptor implements AsyncHandlerInterceptor {
       .build();
     try {
       final DecodedJWT verifiedJwt = verifier.verify(jwt);
-      request.setAttribute("userId", verifiedJwt.getSubject());
+
+      final String userId = verifiedJwt.getSubject();
+
+      //Confirm that the user exist
+      final UserWallet userWallet = userService.getUserWalletById(userId);
+
+      request.setAttribute("userId", userId);
     } catch (Exception e) {
       throw new InvalidUserTokenException();
     }

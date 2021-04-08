@@ -1,5 +1,8 @@
 package com.example.walletapp.model.repository;
 
+import com.example.walletapp.constant.Currency;
+import com.example.walletapp.exception.UnexpectedException;
+import com.example.walletapp.model.service.MultiCurrencyAccountAdapter;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +17,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Builder
 @Document
-public class User {
+public class User implements MultiCurrencyAccountAdapter<Currency> {
+
   @Id
   private ObjectId id;
 
@@ -27,11 +31,39 @@ public class User {
   private String eur;
 
   @CreatedDate
-  private Date createdDate;
+  private Date createdAt;
 
   @LastModifiedDate
-  private Date lastModifiedDate;
+  private Date updatedAt;
 
   @Version
   private Integer _v;
+
+  @Override
+  public String getAmountByCurrency(Currency currency) {
+    switch (currency) {
+      case HKD:
+        return hkd;
+      case USD:
+        return usd;
+      case EUR:
+        return eur;
+    }
+    throw new UnexpectedException("Unknown currency " + currency);
+  }
+
+  @Override
+  public void setAmountByCurrency(Currency currency, String amount) {
+    switch (currency) {
+      case HKD:
+        hkd = amount;
+        break;
+      case USD:
+        usd = amount;
+        break;
+      case EUR:
+        eur = amount;
+        break;
+    }
+  }
 }

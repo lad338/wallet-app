@@ -54,27 +54,4 @@ public class LoginServiceImpl implements LoginService {
       .withExpiresAt(expireAt)
       .sign(Algorithm.HMAC256(securityConfig.getJwtSecret()));
   }
-
-  public static void main(String[] args) {
-    final Date expireAt = new Date(new Date().getTime() + 30 * 60 * 1000);
-    final String jwt = JWT
-      .create()
-      .withSubject("userId_test")
-      .withExpiresAt(expireAt)
-      .sign(Algorithm.HMAC256("wallet-app"));
-
-    final DecodedJWT decodedJWT = JWT.decode(jwt);
-    final String algorithm = decodedJWT.getAlgorithm();
-    final String subject = decodedJWT.getSubject();
-    final String signature = decodedJWT.getSignature();
-
-    final JWTVerifier verifier = JWT.require(Algorithm.HMAC256("wallet-app")).build();
-
-    verifier.verify(jwt);
-
-    System.out.println(jwt);
-    System.out.println(algorithm);
-    System.out.println(subject);
-    System.out.println(signature);
-  }
 }
