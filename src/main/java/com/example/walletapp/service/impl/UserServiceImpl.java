@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService, BigDecimalHelper {
 
   @Override
   public UserWallet getUserWalletById(String id) throws UserNotFoundException {
+    //get user wallet and return with a user wallet model
     return userRepository
       .findById(new ObjectId(id))
       .map(
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService, BigDecimalHelper {
 
   @Override
   public String getUserIdByUsername(String username) throws UserNotFoundException {
+    // find userId by username
     return userRepository
       .findByUsername(username)
       .map(user -> user.getId().toHexString())
@@ -57,6 +59,7 @@ public class UserServiceImpl implements UserService, BigDecimalHelper {
     ExecutableTransaction executableTransaction,
     TransactionSnapshot snapshot
   ) {
+    // get the user for the transaction
     final User user = userRepository
       .findById(new ObjectId(executableTransaction.getUserId()))
       .orElseThrow(UserNotFoundException::new);
@@ -67,41 +70,54 @@ public class UserServiceImpl implements UserService, BigDecimalHelper {
     switch (executableTransaction.getAction()) {
       case DEPOSIT:
         {
+          //update wallet by adding amount
           updateAccount(user, currency, amount, UpdateAccountAction.ADD);
           break;
         }
       case WITHDRAW:
         {
+          //check if the user has sufficient amount to be withdrawn
           requireUserSufficientAmount(user, currency, amount);
+          //update wallet by deducting amount
           updateAccount(user, currency, amount, UpdateAccountAction.DEDUCT);
           break;
         }
       case EXCHANGE:
         {
+          //check if the user has sufficient amount to be exchanged
           requireUserSufficientAmount(user, currency, amount);
 
           final Currency targetCurrency = executableTransaction.getTargetCurrency();
           final BigDecimal targetAmount = snapshot.getExchangedAmount();
 
+          //update the from currency account
           updateAccount(user, currency, amount, UpdateAccountAction.DEDUCT);
+          //update the to currency account
           updateAccount(user, targetCurrency, targetAmount, UpdateAccountAction.ADD);
           break;
         }
       case TRANSFER:
         {
+          //check if the user has sufficient amount to be transfered
           requireUserSufficientAmount(user, currency, amount);
 
           try {
+            //get the target user
             final User target = requireExistingTarget(executableTransaction.getTargetId());
+            //update the target user account to add the transfer amount
             updateAccount(target, currency, amount, UpdateAccountAction.ADD);
+            //save the target user
             userRepository.save(target);
           } catch (UserNotFoundException e) {
+            //marked as unexpected exception since the if the user does not exist, it shall be blocked in previous section.
             throw new UnexpectedException("Target User Id Not Found");
           }
+          //update user account to deduct amount
           updateAccount(user, currency, amount, UpdateAccountAction.DEDUCT);
           break;
         }
     }
+    //save the user
     userRepository.save(user);
   }
 
@@ -112,10 +128,13 @@ public class UserServiceImpl implements UserService, BigDecimalHelper {
     UpdateAccountAction action
   ) {
     if (!UpdateAccountAction.ADD.equals(action)) {
+      //recursively add the amount as a negative number for deduction cases
       updateAccount(user, currency, amount.negate(), UpdateAccountAction.ADD);
       return;
     }
+    //calculate the updated amount
     final BigDecimal updatedAmount = new BigDecimal(user.getAmountByCurrency(currency)).add(amount);
+    //update the user account
     user.setAmountByCurrency(currency, updatedAmount.toString());
   }
 

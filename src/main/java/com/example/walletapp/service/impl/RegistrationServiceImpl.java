@@ -32,6 +32,7 @@ public class RegistrationServiceImpl implements RegistrationService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public User register(UserRegistration userRegistration) {
+    //initial user record
     final User user = User
       .builder()
       .username(userRegistration.getUsername())
@@ -41,8 +42,10 @@ public class RegistrationServiceImpl implements RegistrationService {
       .usd("0")
       .build();
 
+    // save the user
     final User createdUser = userRepository.save(user);
 
+    //in case of initial deposit, do transactions
     Arrays
       .asList(Currency.values())
       .forEach(
@@ -61,6 +64,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
       );
 
+    //return the created user
     return createdUser;
   }
 }

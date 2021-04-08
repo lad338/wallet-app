@@ -41,6 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
   @Override
   @Transactional
   public Transaction executeTransaction(ExecutableTransaction transaction) {
+    // for exchange type transactions, get required exchange rate
     final BigDecimal requiredExchangeRate = transaction
         .getAction()
         .equals(TransactionAction.EXCHANGE)
@@ -50,6 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
       )
       : null;
 
+    // for exchange type transactions, get required exchanged amount
     final BigDecimal exchangedAmount = Optional
       .ofNullable(requiredExchangeRate)
       .map(
@@ -58,6 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
       )
       .orElse(null);
 
+    // snap shot exchanged amount and exchange rate for updating user wallet and writing transaction record
     final TransactionSnapshot snapshot = TransactionSnapshot
       .builder()
       .exchangedAmount(exchangedAmount)
@@ -65,8 +68,10 @@ public class TransactionServiceImpl implements TransactionService {
       .time(new Date())
       .build();
 
+    // update user wallet with transaction
     userService.updateUserWithTransaction(transaction, snapshot);
 
+    // transaction history record
     final Transaction transactionHistory = Transaction
       .builder()
       .transactionAction(transaction.getAction().toString())
@@ -86,11 +91,14 @@ public class TransactionServiceImpl implements TransactionService {
       .executedAt(snapshot.getTime())
       .build();
 
+    // save and return the transaction record
     return transactionRepository.save(transactionHistory);
   }
 
   @Override
   public List<Transaction> getTransactionsByUserId(String userId) {
+    // get the transactions related to the user
+    // including user transactions and transfer received
     return transactionRepository.getTransactionsByUserIdOrTargetIdOrderByExecutedAt(userId, userId);
   }
 }

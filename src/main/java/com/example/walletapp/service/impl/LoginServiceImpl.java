@@ -35,16 +35,20 @@ public class LoginServiceImpl implements LoginService {
 
   @Override
   public String login(LoginAdapter login) {
+    //get expire date
     final Date expireAt = new Date(new Date().getTime() + jwtConfig.getExpiry());
 
+    //find the user by username
     final User user = userRepository
       .findByUsername(login.getUsername())
       .orElseThrow(InvalidLoginException::new);
 
+    //verify the password
     if (!bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
       throw new InvalidLoginException();
     }
 
+    //return jwt
     return JWT
       .create()
       .withIssuer("wallet-app")
