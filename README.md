@@ -12,10 +12,10 @@ As the initial build and start up may take some time, it is suggested to start u
 The prerequisite of the provided scripts require docker and docker-compose installed and ports 8080 and 27017 available.
 For the initial build and start up, please use `sh initial_run.sh`
 The script will start up a mongoDB and the Spring Boot server.
-As we will need to use transaction in the server, master and salves of mongoDB is required.
+As we will need to use transaction in the server, master and slaves of mongoDB is required.
 However, in local environment, a single mongo instance is created, and the script is used to mimic the aforementioned situation with one instance only.
 The `initial_run.sh` is only required for the first run. Future startups after shall only require `docker-compose up`.
-The server successfully starts up with the server log of `Started WalletApplication in x.xxx seconds`
+The server successfully starts up with the server log of `Started WalletApplication in x.xxx seconds`.
 `Ctrl + C` shall stop the backend.
 As for any coding updates, use `docker-compose build` to rebuild the docker images.
 
@@ -37,8 +37,8 @@ For exchange rates among currencies, it is currently hard coded in the program w
 
 ## Backend explanation and highlights
 
-The core functions of the backend shall be found under the service package `./src/main/java/com/example/walletapp/service`
-The 4 implementations highlight the 4 major components of the backend `Registration`, `Login`, `Transaction` and `User`
+The core functions of the backend shall be found under the service package `./src/main/java/com/example/walletapp/service`.
+The 4 implementations highlight the 4 major components of the backend `Registration`, `Login`, `Transaction` and `User`.
 `Registration` and `Login` are self-explanatory.
 `Transaction` includes retrieving transaction history and executing a transaction which also writes a transaction record.
 `User` includes finding a user and updating a user wallet with transactions.
@@ -47,7 +47,7 @@ To handle transactions, it uses optimistic lock with the @Version annotation sup
 An optimistic lock exception will be thrown if version of the account record changes during process.
 Any exception thrown within a @Transactional annotated block shall result in a rollback.
 
-To deal with changing exchange rates, it shall snap-shot an exchange rate upon receiving an `EXCHANGE` transaction request. (Please refer to `TransactionServiceImpl.java`)
+To deal with changing exchange rates, it shall snap-shot an exchange rate upon receiving an `EXCHANGE` transaction request. (Please refer to `TransactionServiceImpl.java`).
 All calculations are using the `BigDecimal` class.
 
 On the other hand, the controllers includes the APIs provided by the backend.
@@ -55,7 +55,7 @@ The APIs are designed in RESTful.
 The APIs request and response shall be further discussed the postman section side-by-side.
 
 Using Java as a multi-paradigm programming language, the coding borrows concepts and characteristics from different paradigms.
-In terms of Object-Oriented Programming, the models are designed with encapsulation (Please refer to `src/main/java/com/example/walletapp/model`)
+In terms of Object-Oriented Programming, the models are designed with encapsulation (Please refer to `src/main/java/com/example/walletapp/model`).
 Getter and Setter functions are created with the lombok annotation @Data.
 In terms of Functional Programming, the backend uses Immutability (constants are declared with `final` ), higher-order functions (JAVA 8 APIs such as `map`, etc) and recursive functions (e.g. `UserServiceImpl::updateAccount`).
 
@@ -67,7 +67,9 @@ The testing script shall apply the jwt from login responses to the environment.
 Examples are also provided for the APIs.
 
 ### Health Check
+
 `GET localhost:8080/actuator/health`
+
 The health check API only returns a simple response of `{"status":"UP"}` to indicating that the API server is available and accepting API calls.
 It uses Spring Actuator.
 
@@ -80,14 +82,18 @@ Register is also consider as logged in.
 The response shall return a jwt for authentication on other user action based APIs.
 
 FYI
+
 The passwords are stored in the DB with the encryption of Spring Security `BCryptPasswordEncoder`.
+
 The username field is marked unique in DB level and indexed.
 
 
 You may create a user for the following testing.
 
 ### Login User
+
 `POST localhost:8080/login`
+
 For the request body, `username` and `password` are required.
 The response shall return a jwt for authentication.
 You may also use this as a refresh token action.
@@ -97,14 +103,18 @@ FYI, the jwt expires in 30 minutes.
 For the following requests, jwt is required for authentication.
 
 ### My Wallet
+
 `GET localhost:8080/users/me`
+
 The response shall include `hkd`, `usd` and `eur` as the 3 amounts for the 3 currencies.
 If no initial deposit is included when creating the user, they should show `0`.
 
 You may come back to this API after calling transaction APIs to verify the wallet amount.
 
 ### My Transaction History
+
 `GET localhost:8080/users/me/transactions`
+
 The response shall include a list of transaction records.
 If there is an initial deposit when creating the user, there should be `DESPOSIT` records.
 
@@ -115,7 +125,9 @@ Transaction history includes all `DEPOSIT`, `WITHDRAW`, `EXCHANGE`, `TRANSFER` a
 In DB level, `userId` and `targerId` are indexed.
 
 ### Transaction
+
 `POST localhost:8080/users/me/transactions`
+
 The transaction APIs share the same method and url but with a different value of `action` in the request body.
 The supported actions are `DEPOSIT`, `WITHDRAW`, `EXCHANGE` and `TRANSFER`
 The supported currencies are `HKD`, `USD` and `EUR`
