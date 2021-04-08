@@ -1,10 +1,8 @@
 package com.example.walletapp.service.impl;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.walletapp.config.SecurityConfig;
+import com.example.walletapp.config.JwtConfig;
 import com.example.walletapp.exception.InvalidLoginException;
 import com.example.walletapp.model.repository.User;
 import com.example.walletapp.model.service.LoginAdapter;
@@ -18,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginServiceImpl implements LoginService {
 
-  private final SecurityConfig securityConfig;
+  private final JwtConfig jwtConfig;
 
   private final UserRepository userRepository;
 
@@ -26,18 +24,18 @@ public class LoginServiceImpl implements LoginService {
 
   @Autowired
   public LoginServiceImpl(
-    SecurityConfig securityConfig,
+    JwtConfig jwtConfig,
     UserRepository userRepository,
     BCryptPasswordEncoder bCryptPasswordEncoder
   ) {
-    this.securityConfig = securityConfig;
+    this.jwtConfig = jwtConfig;
     this.userRepository = userRepository;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
 
   @Override
   public String login(LoginAdapter login) {
-    final Date expireAt = new Date(new Date().getTime() + securityConfig.getExpiry());
+    final Date expireAt = new Date(new Date().getTime() + jwtConfig.getExpiry());
 
     final User user = userRepository
       .findByUsername(login.getUsername())
@@ -52,6 +50,6 @@ public class LoginServiceImpl implements LoginService {
       .withIssuer("wallet-app")
       .withSubject(user.getId().toHexString())
       .withExpiresAt(expireAt)
-      .sign(Algorithm.HMAC256(securityConfig.getJwtSecret()));
+      .sign(Algorithm.HMAC256(jwtConfig.getJwtSecret()));
   }
 }
