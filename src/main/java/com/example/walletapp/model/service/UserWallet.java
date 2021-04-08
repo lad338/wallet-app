@@ -6,10 +6,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserRegistration implements LoginAdapter {
+public class UserWallet {
 
-  private String username;
-  private String password;
   private BigDecimal hkd;
   private BigDecimal usd;
   private BigDecimal eur;

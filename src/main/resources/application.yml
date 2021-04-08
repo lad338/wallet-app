@@ -2,3 +2,6 @@ mongo:
     hosts: ${MONGO_HOST:localhost}
     port: 27017
     database: walletapp
+
+jwt:
+    secret: 'wallet-app'

@@ -4,11 +4,8 @@ import com.example.walletapp.model.service.LoginAdapter;
 import lombok.Data;
 
 @Data
-public class UserRegistrationRequest implements LoginAdapter {
+public class LoginRequest implements LoginAdapter {
 
   private String username;
   private String password;
-  private String hkd;
-  private String usd;
-  private String eur;
 }
