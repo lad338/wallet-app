@@ -74,7 +74,9 @@ The health check API only returns a simple response of `{"status":"UP"}` to indi
 It uses Spring Actuator.
 
 ### Register User
+
 `POST localhost:8080/users`
+
 The register user API creates a user record. 
 For the request body, `username` and `password` are required.
 Optional request parameter of `hkd`, `usd` and `eur` are supported for initial deposit transactions.
@@ -121,7 +123,9 @@ If there is an initial deposit when creating the user, there should be `DESPOSIT
 You may come back to this API after calling transaction APIs to verify the transaction history.
 
 FYI 
+
 Transaction history includes all `DEPOSIT`, `WITHDRAW`, `EXCHANGE`, `TRANSFER` and transfers from other users' `TRANSFER` which us marked as `RECEIVE`.
+
 In DB level, `userId` and `targerId` are indexed.
 
 ### Transaction
@@ -129,16 +133,19 @@ In DB level, `userId` and `targerId` are indexed.
 `POST localhost:8080/users/me/transactions`
 
 The transaction APIs share the same method and url but with a different value of `action` in the request body.
-The supported actions are `DEPOSIT`, `WITHDRAW`, `EXCHANGE` and `TRANSFER`
-The supported currencies are `HKD`, `USD` and `EUR`
+The supported actions are `DEPOSIT`, `WITHDRAW`, `EXCHANGE` and `TRANSFER`.
+The supported currencies are `HKD`, `USD` and `EUR`.
 `amount`, `currency` and `action` are required for all actions.
+
 `targetCurrency` is required for `EXCHANGE`.
+
 `targetUsername` is required for `TRANSFER`.
 
-For `EXCHANGE`, the `amount` to be exchanged from is from the `currency`, i.e. shall deduct `currency` account and add `targetCurrency` account
+For `EXCHANGE`, the `amount` to be exchanged from is from the `currency`, i.e. shall deduct `currency` account and add `targetCurrency` account.
+
 For `TRANSFER`, it is assumed that the same currency is used. The user shall first exchange then transfer if applicable.
 
-You may go back to register user to create another user to test `TRANSFER`
+You may go back to register user to create another user to test `TRANSFER`.
 
 The response shall include a transaction record ID.
 
