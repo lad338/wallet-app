@@ -7,4 +7,5 @@ import java.util.List;
 public interface TransactionService {
   Transaction executeTransaction(ExecutableTransaction transaction);
   List<Transaction> getTransactionsByUserId(String userId);
+  List<Transaction> getPageableTransactionsByUserId(String userId, Integer page, Integer size);
 }

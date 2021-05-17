@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,5 +102,18 @@ public class TransactionServiceImpl implements TransactionService {
     // get the transactions related to the user
     // including user transactions and transfer received
     return transactionRepository.getTransactionsByUserIdOrTargetIdOrderByExecutedAt(userId, userId);
+  }
+
+  @Override
+  public List<Transaction> getPageableTransactionsByUserId(
+    String userId,
+    Integer page,
+    Integer size
+  ) {
+    final PageRequest pageRequest = PageRequest.of(page, size, Sort.by("executedAt").descending());
+
+    return transactionRepository
+      .getTransactionsByUserIdOrTargetIdOrderByExecutedAt(userId, userId, pageRequest)
+      .toList();
   }
 }

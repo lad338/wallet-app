@@ -3,6 +3,8 @@ package com.example.walletapp.repository;
 import com.example.walletapp.model.repository.Transaction;
 import java.util.List;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,11 @@ public interface TransactionRepository extends MongoRepository<Transaction, Obje
   List<Transaction> getTransactionsByUserIdOrTargetIdOrderByExecutedAt(
     String userId,
     String targetId
+  );
+
+  Page<Transaction> getTransactionsByUserIdOrTargetIdOrderByExecutedAt(
+    String userId,
+    String targetId,
+    PageRequest request
   );
 }
